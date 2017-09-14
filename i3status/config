@@ -12,7 +12,7 @@ general {
 }
 
 order += "disk /"
-order += "wireless _first_"
+#order += "wireless _first_"
 order += "load"
 order += "tztime local"
 

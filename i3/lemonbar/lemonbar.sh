@@ -56,7 +56,7 @@ network() {
 
 netspeed() {
     TEXT=`awk '{if(l1){print int(($2-l1)/1024)"kB/s",int(($10-l2)/1024)"kB/s"} else{l1=$2; l2=$10;}}' \
-        <(grep wlp3s0 /proc/net/dev) <(sleep 1; grep wlp3s0 /proc/net/dev)`
+        <(grep enp2s0 /proc/net/dev) <(sleep 1; grep enp2s0 /proc/net/dev)`
     UP=`echo $TEXT | cut -d' ' -f2`
     DOWN=`echo $TEXT | cut -d' ' -f1`
     echo " ${DOWN}  ${UP}"

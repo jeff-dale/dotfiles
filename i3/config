@@ -172,6 +172,10 @@ bar {
 }
 
 exec --no-startup-id compton
-exec --no-startup-id ~/.screenlayout/landscape.sh
+exec --no-startup-id bash ~/.screenlayout/landscape.sh
 exec --no-startup-id nitrogen --restore
 exec --no-startup-id bash ~/.config/i3/lemonbar/lemonbar.sh | lemonbar -f "FontAwesome-12" -f "Droid Sans-12" -B \#77000000
+
+exec --no-startup-id xset s off
+exec --no-startup-id xset -dpms
+exec --no-startup-id xset s noblank
