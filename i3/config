@@ -26,6 +26,9 @@ bindsym $mod+Control+l exec --no-startup-id ~/.config/i3lock-fancy/lock
 # $mod+e -> open nautilus
 bindsym $mod+e exec --no-startup-id nautilus
 
+# Set certain windows to default floating
+for_window [class="(?i)Nautilus"] floating enable
+
 
 ###############################################################################################################
 ############################################ WINDOW CONTROLS ##################################################
