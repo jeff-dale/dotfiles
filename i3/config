@@ -23,6 +23,9 @@ bindsym $mod+d exec --no-startup-id dmenu_run
 # lock screen with i3lock-fancy
 bindsym $mod+Control+l exec --no-startup-id ~/.config/i3lock-fancy/lock
 
+# $mod+e -> open nautilus
+bindsym $mod+e exec --no-startup-id nautilus
+
 
 ###############################################################################################################
 ############################################ WINDOW CONTROLS ##################################################
@@ -64,7 +67,7 @@ bindsym $mod+f fullscreen toggle
 # change container layout (stacked, tabbed, toggle split)
 bindsym $mod+s layout stacking
 bindsym $mod+w layout tabbed
-bindsym $mod+e layout toggle split
+bindsym $mod+t layout toggle split
 
 # toggle tiling / floating
 bindsym $mod+Shift+space floating toggle
@@ -174,7 +177,7 @@ bar {
 exec --no-startup-id compton
 exec --no-startup-id bash ~/.screenlayout/landscape.sh
 exec --no-startup-id nitrogen --restore
-exec --no-startup-id bash ~/.config/i3/lemonbar/lemonbar.sh | lemonbar -f "FontAwesome-12" -f "Droid Sans-12" -B \#77000000
+exec --no-startup-id bash ~/.config/i3/lemonbar/lemonbar.sh | lemonbar -f "FontAwesome-12" -f "Droid Sans-12" -B \#AA000000
 
 exec --no-startup-id xset s off
 exec --no-startup-id xset -dpms

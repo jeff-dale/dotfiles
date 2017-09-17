@@ -105,7 +105,7 @@ while :; do
 
     # Left align
     buf="${buf}%{l}"
-    buf="${buf}%{B#086caa} $(workspaces) %{B#000000} "
+    #buf="${buf}%{B#086caa} $(workspaces) %{B#000000} "
     buf="${buf} ${btctext}"
     
 
