@@ -37,6 +37,22 @@ cpuload() {
     bc <<< $LINE
 }
 
+coretemp() {
+    ALL_TEMPS=(`sensors | grep "Core [[:digit:]]"`)
+    CORE0=${ALL_TEMPS[2]:1}
+    CORE1=${ALL_TEMPS[11]:1}
+    CORE2=${ALL_TEMPS[20]:1}
+    CORE3=${ALL_TEMPS[29]:1}
+    printf "   ${CORE0} ${CORE1} ${CORE2} ${CORE3}"
+}
+
+memory() {
+    MEM=(`free -mh | grep "Mem:"`)
+    MEM_USED=${MEM[2]}
+    MEM_TOTAL=${MEM[1]}
+    printf "   ${MEM_USED} / ${MEM_TOTAL}"
+}
+
 network() {
     read lo int1 int2 <<< `ip link | sed -n 's/^[0-9]: \(.*\):.*$/\1/p'`
     if iwconfig $int1 >/dev/null 2>&1; then
@@ -106,8 +122,9 @@ while :; do
     # Left align
     buf="${buf}%{l}"
     #buf="${buf}%{B#086caa} $(workspaces) %{B#000000} "
-    buf="${buf} ${btctext}"
-    
+    buf="${buf} ${btctext} "
+    buf="${buf} $(coretemp) "
+    buf="${buf} $(memory)"
 
     # Center align
     buf="${buf}%{c}"

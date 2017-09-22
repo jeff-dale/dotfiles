@@ -28,7 +28,9 @@ bindsym $mod+e exec --no-startup-id nautilus
 
 # Set certain windows to default floating
 for_window [class="(?i)Nautilus"] floating enable
-
+for_window [class="(?i)Nautilus"] resize set 1000 700
+for_window [class="(?i)pavucontrol"] floating enable
+for_window [class="(?i)pavucontrol"] resize set 1000 700
 
 ###############################################################################################################
 ############################################ WINDOW CONTROLS ##################################################
