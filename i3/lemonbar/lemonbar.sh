@@ -43,7 +43,7 @@ coretemp() {
     CORE1=${ALL_TEMPS[11]:1}
     CORE2=${ALL_TEMPS[20]:1}
     CORE3=${ALL_TEMPS[29]:1}
-    printf "   ${CORE0} ${CORE1} ${CORE2} ${CORE3}"
+    printf "   | ${CORE0} | ${CORE1} | ${CORE2} | ${CORE3} |"
 }
 
 memory() {
