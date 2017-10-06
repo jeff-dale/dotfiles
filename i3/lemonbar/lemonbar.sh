@@ -11,12 +11,18 @@ clock() {
 }
 
 battery() {
-    BATC=/sys/class/power_supply/BAT1/capacity
-    BATS=/sys/class/power_supply/BAT1/status
-
-    test "`cat $BATS`" = "Charging" && echo -n '+' || echo -n '-'
-
-    sed -n p $BATC
+    BAT_CAP=`cat /sys/class/power_supply/BAT0/capacity`
+    if (($BAT_CAP < 20)); then
+        printf " $BAT_CAP%%"
+    elif (($BAT_CAP < 50)); then
+        printf " $BAT_CAP%%"
+    elif (($BAT_CAP < 70)); then
+        printf " $BAT_CAP%%"
+    elif (($BAT_CAP < 90)); then
+        printf " $BAT_CAP%%"
+    else
+        printf " $BAT_CAP%%"
+    fi
 }
 
 bitcoin() {
@@ -72,7 +78,7 @@ network() {
 
 netspeed() {
     TEXT=`awk '{if(l1){print int(($2-l1)/1024)"kB/s",int(($10-l2)/1024)"kB/s"} else{l1=$2; l2=$10;}}' \
-        <(grep enp2s0 /proc/net/dev) <(sleep 1; grep enp2s0 /proc/net/dev)`
+        <(grep wlp8s0 /proc/net/dev) <(sleep 1; grep wlp8s0 /proc/net/dev)`
     UP=`echo $TEXT | cut -d' ' -f2`
     DOWN=`echo $TEXT | cut -d' ' -f1`
     echo " ${DOWN}  ${UP}"
@@ -136,6 +142,7 @@ while :; do
     buf="${buf}  $(cpuload)% "
     buf="${buf}  $(wifi) "
     buf="${buf}  $(volume) "
+    buf="${buf} $(battery) "
     buf="${buf}  $(clock) "
 
     Monitors=$(xrandr | grep -o "^.* connected" | sed "s/ connected//")
