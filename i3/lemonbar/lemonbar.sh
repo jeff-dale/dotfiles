@@ -118,7 +118,11 @@ gpu() {
 }
 
 gpu2() {
+<<<<<<< HEAD
     echo `gpustat | grep "\[0\]" | cut -d"|" -f2 | sed "s: ::g" | sed "s:,:   :g" | sed "s:':°:g"`
+=======
+    echo `gpustat | grep "\[0\]" | cut -d"|" -f2 | sed "s: ::g" | sed "s:,: | :g" | sed "s:':°:g"`
+>>>>>>> 24b109247c668824ac87fe223ddcdbc14a07b82d
 }
 
 # This loop will fill a buffer with our infos, and output it to stdout.
@@ -140,7 +144,11 @@ while :; do
     buf="${buf} ${btctext} "
     buf="${buf} $(coretemp) "
     buf="${buf} $(memory)  "
+<<<<<<< HEAD
     buf="${buf}  $(gpu)   $(gpu2)"
+=======
+    buf="${buf}  $(gpu) | $(gpu2)"
+>>>>>>> 24b109247c668824ac87fe223ddcdbc14a07b82d
 
     # Center align
     buf="${buf}%{c}"
