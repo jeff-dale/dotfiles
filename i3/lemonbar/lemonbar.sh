@@ -7,7 +7,7 @@
 NETWORK_DELAY=600
 
 clock() {
-    date '+%l:%M %p'
+    date '+ %B %d, %Y   %l:%M %p '
 }
 
 battery() {
@@ -20,9 +20,11 @@ battery() {
 }
 
 bitcoin() {
-    buy=`curl -s https://blockchain.info/ticker | jq '.USD.buy'`
-    blockcount=`curl -s https://blockexplorer.com/api/status\?q=getBlockCount | jq '.blockcount'`
-    printf " 1 BTC = $%s Blocks: %s" "$buy" "$blockcount"
+    buy=`curl -s https://blockchain.info/ticker | jq '.USD.buy' | xargs printf "%.*f\n" 2`
+    #blockcount=`curl -s https://blockexplorer.com/api/status\?q=getBlockCount | jq '.blockcount'`
+    #blockcount=`curl -s https://blockchain.info/ticker | jq '.USD.buy' | xargs printf "%.*f\n" 0`
+    #printf " 1 BTC = $%s  Blocks: %s" "$buy" "$blockcount"
+    printf " 1 BTC = $%s" "$buy"
 }
 
 volume() {
@@ -45,6 +47,11 @@ coretemp() {
     CORE3=${ALL_TEMPS[29]:1}
     printf "   ${CORE0} | ${CORE1} | ${CORE2} | ${CORE3}"
 }
+
+#disk() {
+#    SPACE=`df -lh -x tmpfs -x devtmpfs --output=avail,target | grep -v "/media/" | grep "/" | cut -d " " -f 2`
+#    printf " ${SPACE}"
+#}
 
 memory() {
     MEM=(`free -mh | grep "Mem:"`)
@@ -75,7 +82,7 @@ netspeed() {
         <(grep enp2s0 /proc/net/dev) <(sleep 1; grep enp2s0 /proc/net/dev)`
     UP=`echo $TEXT | cut -d' ' -f2`
     DOWN=`echo $TEXT | cut -d' ' -f1`
-    echo " ${DOWN}  ${UP}"
+    echo " ${DOWN}   ${UP}"
 }
 
 nowplaying() {
@@ -106,6 +113,14 @@ workspaces() {
     echo `i3-msg -t get_workspaces | jq '.[] | select(.focused==true).name' | cut -d"\"" -f2`
 }
 
+gpu() {
+    echo `gpustat | grep "\[0\]" | cut -d"|" -f3 | sed 's: / :M/:g' | sed "s: ::g" | sed "s:B::g"`
+}
+
+gpu2() {
+    echo `gpustat | grep "\[0\]" | cut -d"|" -f2 | sed "s: ::g" | sed "s:,:   :g" | sed "s:':°:g"`
+}
+
 # This loop will fill a buffer with our infos, and output it to stdout.
 loops=$NETWORK_DELAY
 btctext=""
@@ -124,7 +139,8 @@ while :; do
     #buf="${buf}%{B#086caa} $(workspaces) %{B#000000} "
     buf="${buf} ${btctext} "
     buf="${buf} $(coretemp) "
-    buf="${buf} $(memory)"
+    buf="${buf} $(memory)  "
+    buf="${buf}  $(gpu)   $(gpu2)"
 
     # Center align
     buf="${buf}%{c}"
@@ -132,11 +148,12 @@ while :; do
 
     # Right align
     buf="${buf}%{r}"
-    buf="${buf} $(netspeed) "
-    buf="${buf}  $(cpuload)% "
-    buf="${buf}  $(wifi) "
-    buf="${buf}  $(volume) "
-    buf="${buf}  $(clock) "
+    buf="${buf} $(netspeed)  "
+    #buf="${buf} $(disk) "
+    buf="${buf}  $(cpuload)%  "
+    buf="${buf}  $(wifi)  "
+    buf="${buf}  $(volume)  "
+    buf="${buf} $(clock)  "
 
     Monitors=$(xrandr | grep -o "^.* connected" | sed "s/ connected//")
     tmp=0                                                                       

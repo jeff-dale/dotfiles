@@ -34,3 +34,5 @@ function fish_prompt
 
   set_color normal
 end
+
+thefuck --alias | source
