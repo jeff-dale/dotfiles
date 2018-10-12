@@ -2,7 +2,7 @@
 ###################################################################################
 ############## Lemonbar script, pipe to lemonbar from command line ################
 ###################################################################################
-# bash ~/.config/i3/lemonbar/lemonbar.sh | lemonbar -f "FontAwesome" -f "Droid Sans"
+# bash ~/.config/i3/lemonbar/lemonbar.sh | lemonbar -f "FontAwesome-12" -f "Droid Sans-12" -B \#AA000000 | while read line; do eval "${line}"; done
 
 NETWORK_DELAY=600
 
@@ -28,7 +28,9 @@ bitcoin() {
 }
 
 volume() {
-    VOL=`amixer get Master | sed -n 'N;s/^.*\[\([0-9]\+\).*$/\1/p'`
+    #VOL=`amixer get Master | sed -n 'N;s/^.*\[\([0-9]\+\).*$/\1/p'`
+    VOL=`pactl list sinks | grep "Volume: " | awk 'NR == 3' | awk '{print $5}'`
+    VOL=`echo ${VOL::-1}`
     GREEN=`echo "255 - ($VOL*255/100)" | bc`
     RED=`echo "255 - $GREEN" | bc`
     printf "%%{F#%02x%02x00}$VOL%%%%{F#FFFFFF}" "$RED" "$GREEN"
@@ -99,9 +101,13 @@ nowplaying() {
 # Get artist: dbus-send --print-reply --session --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.freedesktop.DBus.Properties.Get string:'org.mpris.MediaPlayer2.Player' string:'Metadata' | grep -A 2 "xesam:artist" | grep "string " | tail -1 | sed "s/string //" | tr -d '"' | sed "s/^[ \t]*//"
 # Get title: dbus-send --print-reply --session --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.freedesktop.DBus.Properties.Get string:'org.mpris.MediaPlayer2.Player' string:'Metadata' | grep -A 1 "xesam:title" | tail -1 | sed "s/^[ \t]*variant[ \t]*string //" | tr -d '"'
 spotify() {
-    ARTIST=`dbus-send --print-reply --session --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.freedesktop.DBus.Properties.Get string:'org.mpris.MediaPlayer2.Player' string:'Metadata' | grep -A 2 "xesam:artist" | grep "string " | tail -1 | sed "s/string //" | tr -d '"' | sed "s/^[ \t]*//"`
-    TITLE=`dbus-send --print-reply --session --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.freedesktop.DBus.Properties.Get string:'org.mpris.MediaPlayer2.Player' string:'Metadata' | grep -A 1 "xesam:title" | tail -1 | sed "s/^[ \t]*variant[ \t]*string //" | tr -d '"'`
-    echo "$ARTIST - $TITLE"
+    if pgrep spotify > /dev/null; then
+        ARTIST=`dbus-send --print-reply --session --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.freedesktop.DBus.Properties.Get string:'org.mpris.MediaPlayer2.Player' string:'Metadata' 2>/dev/null | grep -A 2 "xesam:artist" | grep "string " | tail -1 | sed "s/string //" | tr -d '"' | sed "s/^[ \t]*//"`
+        TITLE=`dbus-send --print-reply --session --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.freedesktop.DBus.Properties.Get string:'org.mpris.MediaPlayer2.Player' string:'Metadata' 2>/dev/null | grep -A 1 "xesam:title" | tail -1 | sed "s/^[ \t]*variant[ \t]*string //" | tr -d '"'`
+        echo "$ARTIST - $TITLE"
+    else
+        echo "[Not Running]"
+    fi
 }
 
 wifi() {
@@ -152,8 +158,8 @@ while :; do
     #buf="${buf} $(disk) "
     buf="${buf}  $(cpuload)%  "
     buf="${buf}  $(wifi)  "
-    buf="${buf}  $(volume)  "
-    buf="${buf} $(clock)  "
+    buf="${buf} %{A:pactl set-sink-volume 1 -5%:}%{A3:pactl set-sink-volume 1 +5%:}%{A2:pavucontrol&:} $(volume)%{A}%{A}%{A}  "
+    buf="${buf} %{A:gsimplecal&:}$(clock)%{A}  "
 
     Monitors=$(xrandr | grep -o "^.* connected" | sed "s/ connected//")
     tmp=0                                                                       
